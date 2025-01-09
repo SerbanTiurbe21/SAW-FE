@@ -16,6 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AuthenticationRequest } from '../../interfaces/auth/authenticationrequest.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationResponse } from '../../interfaces/auth/authenticationresponse.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ import { AuthenticationResponse } from '../../interfaces/auth/authenticationresp
     InputTextModule,
     ButtonModule,
     RippleModule,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
