@@ -8,7 +8,9 @@ import {
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthInterceptor implements HttpInterceptor {
   private bypassUrls = [
     'http://localhost:8081/api/v1/auth/register',

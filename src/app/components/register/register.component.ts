@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { passwordMatchValidator } from '../../shared/password-match.directive';
 import { RegisterRequest } from '../../interfaces/auth/registerrequest.model';
 import { AuthenticationResponse } from '../../interfaces/auth/authenticationresponse.model';
+import Aura from '@primeng/themes/aura';
 
 @Component({
   selector: 'app-register',
@@ -44,6 +45,7 @@ export class RegisterComponent implements OnDestroy {
     private msgService: MessageService
   ) {
     this.primeng.theme.set({
+      preset: Aura,
       options: {
         cssLayer: {
           name: 'primeng',

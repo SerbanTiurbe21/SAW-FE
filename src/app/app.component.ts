@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { PrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { Component, HostListener } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-root',
@@ -18,14 +20,33 @@ import { RouterOutlet } from '@angular/router';
     RouterOutlet,
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  text = '';
+  constructor(private primeng: PrimeNG) {
+    this.primeng.theme.set({
+      preset: Aura,
+      options: {
+        cssLayer: {
+          name: 'primeng',
+          order: 'primeng',
+        },
+      },
+    });
 
-  msg = '';
+    // Set a flag in session storage on page load
+    sessionStorage.setItem('pageLoaded', 'true');
+  }
 
-  onClick() {
-    this.msg = 'Welcome ' + this.text;
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(): void {
+    // Check if the session storage flag is still there
+    if (!sessionStorage.getItem('pageLoaded')) {
+      // The flag isn't there, so we assume the window is being closed
+      localStorage.removeItem('authToken');
+    }
+
+    // Optionally clear the session storage here if you want
+    sessionStorage.removeItem('pageLoaded');
   }
 }
