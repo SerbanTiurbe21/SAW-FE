@@ -1,1 +1,129 @@
-<p>home works!</p>
+<div class="card">
+  <p-toast></p-toast>
+  <p-table
+    [value]="products"
+    dataKey="productId"
+    [tableStyle]="{ 'min-width': '60rem' }"
+    [expandedRowKeys]="expandedRows"
+    (onRowExpand)="onRowExpand($event)"
+    (onRowCollapse)="onRowCollapse($event)"
+  >
+    <ng-template #caption>
+      <div class="flex gap-2">
+        <p-button
+          label="Expand All"
+          icon="pi pi-plus"
+          (onClick)="expandAll()"
+        ></p-button>
+        <p-button
+          label="Collapse All"
+          icon="pi pi-minus"
+          (onClick)="collapseAll()"
+        ></p-button>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem"></th>
+        <th pSortableColumn="productName">
+          Name <p-sortIcon field="productName" />
+        </th>
+        <th>Image</th>
+        <th pSortableColumn="price">Price <p-sortIcon field="price" /></th>
+        <th pSortableColumn="category.categoryName">
+          Category <p-sortIcon field="category.categoryName" />
+        </th>
+        <th pSortableColumn="rating">Reviews <p-sortIcon field="rating" /></th>
+        <th pSortableColumn="stock">Status <p-sortIcon field="stock" /></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-product let-expanded="expanded">
+      <tr>
+        <td>
+          <p-button
+            type="button"
+            pRipple
+            [pRowToggler]="product"
+            [text]="true"
+            [rounded]="true"
+            [plain]="true"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          ></p-button>
+        </td>
+        <td>{{ product.productName }}</td>
+        <td>
+          <img
+            [src]="
+              'https://primefaces.org/cdn/primeng/images/demo/product/' +
+              product.image
+            "
+            [alt]="product.productName"
+            width="50"
+            class="shadow-lg rounded-full"
+          />
+        </td>
+        <td>{{ product.price | currency : "USD" }}</td>
+        <td>{{ product.category.categoryName }}</td>
+        <td>
+          <p-rating [ngModel]="product.rating" [readonly]="true"></p-rating>
+        </td>
+
+        <td>
+          <p-tag
+            [value]="getProductStatus(product.stock)"
+            [severity]="getSeverity(product.stock)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- <ng-template #expandedrow let-product>
+      <tr>
+        <td colspan="7">
+          <div class="p-4">
+            <h5>Details for {{ product.productName }}</h5>
+            <p-table [value]="product.productDetails" dataKey="productId">
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="productId">
+                    Attribute <p-sortIcon field="price" />
+                  </th>
+                  <th pSortableColumn="customer">
+                    Value <p-sortIcon field="customer" />
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template> -->
+    <ng-template #expandedrow let-product>
+      <tr>
+        <td colspan="7">
+          <div class="p-4">
+            <h5>Details for {{ product.productName }}</h5>
+            <p-table [value]="product.productDetails" dataKey="detailId">
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="attribute">
+                    Attribute <p-sortIcon field="attribute" />
+                  </th>
+                  <th pSortableColumn="value">
+                    Value <p-sortIcon field="value" />
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-detail>
+                <tr>
+                  <td>{{ detail.attribute }}</td>
+                  <td>{{ detail.value }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
