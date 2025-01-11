@@ -15,6 +15,8 @@ import { Category } from '../../interfaces/category/category.model';
 import { CategoryService } from '../../services/category/category.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductDetail } from '../../interfaces/product-detail/product-detail.model';
+import { CartService } from '../../services/cart.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -27,6 +29,7 @@ import { ProductDetail } from '../../interfaces/product-detail/product-detail.mo
     MessageService,
     ConfirmationService,
     CategoryService,
+    CartService,
   ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -47,7 +50,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private categoryService: CategoryService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cartService: CartService,
+    private router: Router
   ) {
     this.primeng.theme.set({
       preset: Aura,
@@ -340,5 +345,58 @@ export class HomeComponent implements OnInit, OnDestroy {
   handleInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.dt2.filterGlobal(value, 'contains');
+  }
+
+  addToCart(product: Product, quantity: number = 1): void {
+    // Assume each product addition involves a quantity; default is 1 if not specified.
+    if (product.stock >= quantity) {
+      product.category = {
+        categoryId: product.category?.categoryId,
+      };
+      this.cartService
+        .addProductToCart(product, quantity)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Product Added to Cart',
+              detail: `${product.productName} is added to cart.`,
+              life: 3000,
+            });
+            product.stock -= quantity;
+            this.productService
+              .updateProduct(product.productId!, product)
+              .pipe(takeUntil(this.unsubscribe$))
+              .subscribe({
+                next: () => {
+                  console.log('Product stock updated');
+                },
+              });
+            this.fetchCategories();
+          },
+          error: (error) => {
+            console.error('Error adding product to cart:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to add product to cart!',
+              life: 3000,
+            });
+          },
+        });
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Insufficient Stock',
+        detail: `Cannot add ${quantity} of ${product.productName} to cart. Only ${product.stock} left in stock.`,
+        life: 5000,
+      });
+    }
+  }
+
+  navigateToCart(): void {
+    console.log('Navigating to cart');
+    this.router.navigate(['/cart']);
   }
 }

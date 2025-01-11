@@ -33,20 +33,5 @@ export class AppComponent {
         },
       },
     });
-
-    // Set a flag in session storage on page load
-    sessionStorage.setItem('pageLoaded', 'true');
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  onBeforeUnload(): void {
-    // Check if the session storage flag is still there
-    if (!sessionStorage.getItem('pageLoaded')) {
-      // The flag isn't there, so we assume the window is being closed
-      localStorage.removeItem('authToken');
-    }
-
-    // Optionally clear the session storage here if you want
-    sessionStorage.removeItem('pageLoaded');
   }
 }
