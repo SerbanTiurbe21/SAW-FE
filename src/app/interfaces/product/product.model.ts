@@ -11,4 +11,5 @@ export interface Product {
   stock: number;
   productDetails?: ProductDetail[];
   orderItems?: OrderItem[];
+  imageUrl?: string;
 }

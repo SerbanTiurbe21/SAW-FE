@@ -80,10 +80,7 @@
         <td>{{ product.productName }}</td>
         <td>
           <img
-            [src]="
-              'https://primefaces.org/cdn/primeng/images/demo/product/' +
-              product.image
-            "
+            [src]="product.imageUrl"
             [alt]="product.productName"
             width="50"
             class="shadow-lg rounded-full"
@@ -193,6 +190,15 @@
         <label for="stock">Stock</label>
         <input id="stock" type="number" pInputText formControlName="stock" />
       </div>
+      <div class="p-field flex justify-content-between">
+        <label for="imageUrl">Image URL</label>
+        <input
+          id="imageUrl"
+          type="text"
+          pInputText
+          formControlName="imageUrl"
+        />
+      </div>
       <div formArrayName="productDetails">
         <div
           *ngFor="let detail of productDetails.controls; let i = index"
@@ -278,6 +284,15 @@
           type="number"
           pInputText
           formControlName="stock"
+        />
+      </div>
+      <div class="p-field flex justify-content-between">
+        <label for="edit-imageUrl">Image URL</label>
+        <input
+          id="edit-imageUrl"
+          type="text"
+          pInputText
+          formControlName="imageUrl"
         />
       </div>
     </div>

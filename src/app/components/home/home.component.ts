@@ -70,6 +70,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       price: ['', Validators.required],
       category: ['', Validators.required],
       stock: ['', Validators.required],
+      imageUrl: ['', Validators.required],
       productDetails: this.fb.array([]),
     });
   }
@@ -114,6 +115,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       price: [null, Validators.required],
       stock: [null, Validators.required],
       productDetails: this.fb.array([this.createProductDetail()]),
+      imageUrl: ['', Validators.required],
     });
   }
 
@@ -321,6 +323,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       price: product.price,
       category: selectedCategory,
       stock: product.stock,
+      imageUrl: product.imageUrl,
     });
 
     this.productDetailsFormArray.clear();
