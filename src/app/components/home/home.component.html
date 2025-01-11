@@ -134,7 +134,7 @@
 >
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
     <div class="p-fluid">
-      <div class="p-field">
+      <div class="p-field flex justify-content-between">
         <label for="productName">Product Name</label>
         <input
           id="productName"
@@ -143,7 +143,7 @@
           formControlName="productName"
         />
       </div>
-      <div class="p-field">
+      <div class="p-field flex justify-content-between">
         <label for="description">Description</label>
         <input
           id="description"
@@ -152,7 +152,7 @@
           formControlName="description"
         />
       </div>
-      <div class="p-field">
+      <div class="p-field flex justify-content-between">
         <label for="category">Category</label>
         <p-dropdown
           id="category"
@@ -162,11 +162,11 @@
           placeholder="Select a Category"
         ></p-dropdown>
       </div>
-      <div class="p-field">
+      <div class="p-field flex justify-content-between">
         <label for="price">Price</label>
         <input id="price" type="number" pInputText formControlName="price" />
       </div>
-      <div class="p-field">
+      <div class="p-field flex justify-content-between">
         <label for="stock">Stock</label>
         <input id="stock" type="number" pInputText formControlName="stock" />
       </div>
@@ -175,7 +175,7 @@
           *ngFor="let detail of productDetails.controls; let i = index"
           [formGroupName]="i"
         >
-          <div class="p-field">
+          <div class="p-field flex justify-content-between">
             <label for="attribute-{{ i }}">Attribute</label>
             <input
               id="attribute-{{ i }}"
@@ -184,7 +184,7 @@
               formControlName="attribute"
             />
           </div>
-          <div class="p-field">
+          <div class="p-field flex justify-content-between">
             <label for="value-{{ i }}">Value</label>
             <input
               id="value-{{ i }}"
