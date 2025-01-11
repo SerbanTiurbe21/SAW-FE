@@ -84,7 +84,7 @@
           <p-button
             icon="pi pi-pencil"
             class="mr-2"
-            (onClick)="editProduct(product)"
+            (onClick)="openEditDialog(product)"
           ></p-button>
           <p-button
             icon="pi pi-trash"
@@ -216,6 +216,53 @@
           class="mt-4"
         ></p-button>
       </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  header="Edit Product"
+  [(visible)]="displayEditProductDialog"
+  [modal]="true"
+  [style]="{ width: '30vw' }"
+  [draggable]="false"
+>
+  <form [formGroup]="editProductForm" (ngSubmit)="onEditSubmit()">
+    <div class="p-fluid">
+      <div class="p-field flex justify-content-between">
+        <label for="edit-category">Category</label>
+        <p-select
+          id="edit-category"
+          [options]="categories"
+          formControlName="category"
+          optionLabel="categoryName"
+          placeholder="Select a Category"
+        ></p-select>
+      </div>
+      <div class="p-field flex justify-content-between">
+        <label for="edit-price">Price</label>
+        <input
+          id="edit-price"
+          type="number"
+          pInputText
+          formControlName="price"
+        />
+      </div>
+      <div class="p-field flex justify-content-between">
+        <label for="edit-stock">Stock</label>
+        <input
+          id="edit-stock"
+          type="number"
+          pInputText
+          formControlName="stock"
+        />
+      </div>
+      <p-button
+        label="Update Product"
+        icon="pi pi-check"
+        type="submit"
+        class="mt-4 flex justify-content-center"
+      ></p-button>
     </div>
   </form>
 </p-dialog>

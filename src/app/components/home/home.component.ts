@@ -31,6 +31,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   categories!: Category[];
   displayAddProductDialog: boolean = false;
   productForm!: FormGroup;
+  displayEditProductDialog: boolean = false;
+  editProductForm!: FormGroup;
+  currentProduct: Product | null = null;
 
   constructor(
     private productService: ProductService,
@@ -48,6 +51,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.fetchCategories();
     this.initializeForm();
+    this.initializeEditForm();
+  }
+
+  initializeEditForm() {
+    this.editProductForm = this.fb.group({
+      price: ['', Validators.required],
+      category: ['', Validators.required],
+      stock: ['', Validators.required],
+    });
   }
 
   fetchCategories(): void {
@@ -233,5 +245,60 @@ export class HomeComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  onEditSubmit() {
+    if (this.editProductForm.valid && this.currentProduct) {
+      const updatedProduct: Product = {
+        ...this.currentProduct,
+        ...this.editProductForm.value,
+      };
+
+      updatedProduct.category = {
+        categoryId: updatedProduct.category?.categoryId,
+      };
+
+      this.productService
+        .updateProduct(updatedProduct.productId!, updatedProduct)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe({
+          next: (product: Product) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Product Updated',
+              detail: product.productName + ' is updated',
+              life: 3000,
+            });
+            this.fetchCategories();
+          },
+          error: (error) => {
+            console.error(error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error.message,
+              life: 3000,
+            });
+          },
+        });
+
+      this.displayEditProductDialog = false;
+      this.editProductForm.reset();
+    }
+  }
+
+  openEditDialog(product: Product) {
+    const selectedCategory = this.categories.find(
+      (category) => category === product.category
+    );
+    this.currentProduct = product;
+
+    this.editProductForm.patchValue({
+      price: product.price,
+      category: selectedCategory,
+      stock: product.stock,
+    });
+
+    this.displayEditProductDialog = true;
   }
 }
