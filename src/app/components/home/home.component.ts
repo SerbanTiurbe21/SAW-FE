@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product/product.service';
 import { Product } from '../../interfaces/product/product.model';
 import { Subject, takeUntil } from 'rxjs';
@@ -6,10 +6,15 @@ import { PrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { ImportsModule } from '../../imports';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { TableRowCollapseEvent, TableRowExpandEvent } from 'primeng/table';
+import {
+  Table,
+  TableRowCollapseEvent,
+  TableRowExpandEvent,
+} from 'primeng/table';
 import { Category } from '../../interfaces/category/category.model';
 import { CategoryService } from '../../services/category/category.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ProductDetail } from '../../interfaces/product-detail/product-detail.model';
 
 @Component({
   selector: 'app-home',
@@ -25,6 +30,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('dt2') dt2!: Table;
   private unsubscribe$ = new Subject<void>();
   expandedRows: { [key: number]: boolean } = {};
   products!: Product[];
@@ -59,6 +65,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       price: ['', Validators.required],
       category: ['', Validators.required],
       stock: ['', Validators.required],
+      productDetails: this.fb.array([]),
+    });
+  }
+
+  get productDetailsFormArray(): FormArray {
+    return this.editProductForm.get('productDetails') as FormArray;
+  }
+
+  createProductDetailFormGroup(detail?: ProductDetail): FormGroup {
+    return this.fb.group({
+      attribute: [detail ? detail.attribute : '', Validators.required],
+      value: [detail ? detail.value : '', Validators.required],
     });
   }
 
@@ -252,6 +270,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       const updatedProduct: Product = {
         ...this.currentProduct,
         ...this.editProductForm.value,
+        productDetails: this.editProductForm.value.productDetails,
       };
 
       updatedProduct.category = {
@@ -262,21 +281,21 @@ export class HomeComponent implements OnInit, OnDestroy {
         .updateProduct(updatedProduct.productId!, updatedProduct)
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe({
-          next: (product: Product) => {
+          next: () => {
             this.messageService.add({
               severity: 'success',
               summary: 'Product Updated',
-              detail: product.productName + ' is updated',
+              detail: updatedProduct.productName + ' is updated',
               life: 3000,
             });
             this.fetchCategories();
           },
           error: (error) => {
-            console.error(error);
+            console.log(error);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: error.message,
+              detail: error.error.message,
               life: 3000,
             });
           },
@@ -299,6 +318,27 @@ export class HomeComponent implements OnInit, OnDestroy {
       stock: product.stock,
     });
 
+    this.productDetailsFormArray.clear();
+
+    product.productDetails?.forEach((detail) => {
+      this.productDetailsFormArray.push(
+        this.createProductDetailFormGroup(detail)
+      );
+    });
+
     this.displayEditProductDialog = true;
+  }
+
+  addNewProductDetail() {
+    this.productDetailsFormArray.push(this.createProductDetailFormGroup());
+  }
+
+  getRidOfProductDetail(index: number) {
+    this.productDetailsFormArray.removeAt(index);
+  }
+
+  handleInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.dt2.filterGlobal(value, 'contains');
   }
 }

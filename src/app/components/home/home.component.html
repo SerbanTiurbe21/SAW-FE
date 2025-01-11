@@ -2,12 +2,17 @@
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
   <p-table
+    #dt2
     [value]="products"
     dataKey="productId"
     [tableStyle]="{ 'min-width': '60rem' }"
     [expandedRowKeys]="expandedRows"
     (onRowExpand)="onRowExpand($event)"
     (onRowCollapse)="onRowCollapse($event)"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [globalFilterFields]="['productName', 'category.categoryName', 'price']"
   >
     <ng-template #caption>
       <div class="flex justify-between items-center">
@@ -22,6 +27,19 @@
             icon="pi pi-minus"
             (onClick)="collapseAll()"
           ></p-button>
+        </div>
+        <div class="ml-2">
+          <p-iconfield iconPosition="left" class="ml-auto">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input
+              pInputText
+              type="text"
+              (input)="handleInput($event)"
+              placeholder="Search keyword"
+            />
+          </p-iconfield>
         </div>
         <p-button
           label="Add Product"
@@ -224,7 +242,7 @@
   header="Edit Product"
   [(visible)]="displayEditProductDialog"
   [modal]="true"
-  [style]="{ width: '30vw' }"
+  [style]="{ width: '20vw' }"
   [draggable]="false"
 >
   <form [formGroup]="editProductForm" (ngSubmit)="onEditSubmit()">
@@ -257,11 +275,40 @@
           formControlName="stock"
         />
       </div>
+    </div>
+    <div formArrayName="productDetails">
+      <div
+        *ngFor="let detail of productDetailsFormArray.controls; let i = index"
+        [formGroupName]="i"
+        class="p-fluid"
+      >
+        <div class="p-field flex justify-content-between">
+          <label for="attribute-{{ i }}">Attribute</label>
+          <input type="text" pInputText formControlName="attribute" />
+        </div>
+        <div class="p-field flex justify-content-between">
+          <label for="value-{{ i }}">Value</label>
+          <input type="text" pInputText formControlName="value" />
+        </div>
+        <p-button
+          label="Remove Detail"
+          icon="pi pi-minus"
+          (onClick)="getRidOfProductDetail(i)"
+          severity="danger"
+        ></p-button>
+      </div>
+    </div>
+    <div class="p-field flex justify-content-between mt-4">
+      <p-button
+        label="Add Detail"
+        icon="pi pi-plus"
+        (onClick)="addNewProductDetail()"
+        class="p-button-outlined"
+      ></p-button>
       <p-button
         label="Update Product"
         icon="pi pi-check"
         type="submit"
-        class="mt-4 flex justify-content-center"
       ></p-button>
     </div>
   </form>
