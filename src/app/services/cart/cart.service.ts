@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Product } from '../interfaces/product/product.model';
+import { Product } from '../../interfaces/product/product.model';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 interface CartItem {
@@ -59,6 +59,11 @@ export class CartService {
 
   clearCart(): void {
     this.cartItems = [];
+    this.updateLocalStorage();
+  }
+
+  updateQuantity(index: number, quantity: number): void {
+    this.cartItems[index].quantity = quantity;
     this.updateLocalStorage();
   }
 }

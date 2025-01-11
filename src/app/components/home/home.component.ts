@@ -15,7 +15,7 @@ import { Category } from '../../interfaces/category/category.model';
 import { CategoryService } from '../../services/category/category.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductDetail } from '../../interfaces/product-detail/product-detail.model';
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../../services/cart/cart.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -348,7 +348,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product, quantity: number = 1): void {
-    // Assume each product addition involves a quantity; default is 1 if not specified.
     if (product.stock >= quantity) {
       product.category = {
         categoryId: product.category?.categoryId,
@@ -365,14 +364,14 @@ export class HomeComponent implements OnInit, OnDestroy {
               life: 3000,
             });
             product.stock -= quantity;
-            this.productService
-              .updateProduct(product.productId!, product)
-              .pipe(takeUntil(this.unsubscribe$))
-              .subscribe({
-                next: () => {
-                  console.log('Product stock updated');
-                },
-              });
+            // this.productService
+            //   .updateProduct(product.productId!, product)
+            //   .pipe(takeUntil(this.unsubscribe$))
+            //   .subscribe({
+            //     next: () => {
+            //       console.log('Product stock updated');
+            //     },
+            //   });
             this.fetchCategories();
           },
           error: (error) => {
