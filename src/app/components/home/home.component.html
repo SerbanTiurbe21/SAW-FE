@@ -1,5 +1,6 @@
 <div class="card">
   <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
   <p-table
     [value]="products"
     dataKey="productId"
@@ -9,16 +10,24 @@
     (onRowCollapse)="onRowCollapse($event)"
   >
     <ng-template #caption>
-      <div class="flex gap-2">
+      <div class="flex justify-between items-center">
+        <div class="flex gap-2">
+          <p-button
+            label="Expand All"
+            icon="pi pi-plus"
+            (onClick)="expandAll()"
+          ></p-button>
+          <p-button
+            label="Collapse All"
+            icon="pi pi-minus"
+            (onClick)="collapseAll()"
+          ></p-button>
+        </div>
         <p-button
-          label="Expand All"
+          label="Add Product"
           icon="pi pi-plus"
-          (onClick)="expandAll()"
-        ></p-button>
-        <p-button
-          label="Collapse All"
-          icon="pi pi-minus"
-          (onClick)="collapseAll()"
+          (onClick)="displayAddProductDialog = true"
+          class="ml-auto"
         ></p-button>
       </div>
     </ng-template>
@@ -33,8 +42,8 @@
         <th pSortableColumn="category.categoryName">
           Category <p-sortIcon field="category.categoryName" />
         </th>
-        <th pSortableColumn="rating">Reviews <p-sortIcon field="rating" /></th>
         <th pSortableColumn="stock">Status <p-sortIcon field="stock" /></th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template #body let-product let-expanded="expanded">
@@ -64,9 +73,6 @@
         </td>
         <td>{{ product.price | currency : "USD" }}</td>
         <td>{{ product.category.categoryName }}</td>
-        <td>
-          <p-rating [ngModel]="product.rating" [readonly]="true"></p-rating>
-        </td>
 
         <td>
           <p-tag
@@ -74,30 +80,21 @@
             [severity]="getSeverity(product.stock)"
           />
         </td>
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            (onClick)="editProduct(product)"
+          ></p-button>
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            (onClick)="deleteProduct(product)"
+          ></p-button>
+        </td>
       </tr>
     </ng-template>
 
-    <!-- <ng-template #expandedrow let-product>
-      <tr>
-        <td colspan="7">
-          <div class="p-4">
-            <h5>Details for {{ product.productName }}</h5>
-            <p-table [value]="product.productDetails" dataKey="productId">
-              <ng-template #header>
-                <tr>
-                  <th pSortableColumn="productId">
-                    Attribute <p-sortIcon field="price" />
-                  </th>
-                  <th pSortableColumn="customer">
-                    Value <p-sortIcon field="customer" />
-                  </th>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </td>
-      </tr>
-    </ng-template> -->
     <ng-template #expandedrow let-product>
       <tr>
         <td colspan="7">
@@ -127,3 +124,98 @@
     </ng-template>
   </p-table>
 </div>
+
+<p-dialog
+  header="Add New Product"
+  [(visible)]="displayAddProductDialog"
+  [modal]="true"
+  [style]="{ width: '20vw' }"
+  [draggable]="false"
+>
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="productName">Product Name</label>
+        <input
+          id="productName"
+          type="text"
+          pInputText
+          formControlName="productName"
+        />
+      </div>
+      <div class="p-field">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          pInputText
+          formControlName="description"
+        />
+      </div>
+      <div class="p-field">
+        <label for="category">Category</label>
+        <p-dropdown
+          id="category"
+          [options]="categories"
+          formControlName="category"
+          optionLabel="categoryName"
+          placeholder="Select a Category"
+        ></p-dropdown>
+      </div>
+      <div class="p-field">
+        <label for="price">Price</label>
+        <input id="price" type="number" pInputText formControlName="price" />
+      </div>
+      <div class="p-field">
+        <label for="stock">Stock</label>
+        <input id="stock" type="number" pInputText formControlName="stock" />
+      </div>
+      <div formArrayName="productDetails">
+        <div
+          *ngFor="let detail of productDetails.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <div class="p-field">
+            <label for="attribute-{{ i }}">Attribute</label>
+            <input
+              id="attribute-{{ i }}"
+              type="text"
+              pInputText
+              formControlName="attribute"
+            />
+          </div>
+          <div class="p-field">
+            <label for="value-{{ i }}">Value</label>
+            <input
+              id="value-{{ i }}"
+              type="text"
+              pInputText
+              formControlName="value"
+            />
+          </div>
+          <p-button
+            label="Remove"
+            icon="pi pi-minus"
+            (onClick)="removeProductDetail(i)"
+          ></p-button>
+        </div>
+      </div>
+
+      <div class="flex justify-content-between">
+        <p-button
+          label="Add Attribute"
+          icon="pi pi-plus"
+          (onClick)="addProductDetail()"
+          class="mt-4"
+        ></p-button>
+
+        <p-button
+          icon="pi pi-plus"
+          label="Submit"
+          type="submit"
+          class="mt-4"
+        ></p-button>
+      </div>
+    </div>
+  </form>
+</p-dialog>

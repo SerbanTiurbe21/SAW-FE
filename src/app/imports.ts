@@ -23,6 +23,7 @@ import { DividerModule } from 'primeng/divider';
 import { DockModule } from 'primeng/dock';
 import { DrawerModule } from 'primeng/drawer';
 import { DragDropModule } from 'primeng/dragdrop';
+import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { DynamicDialog } from 'primeng/dynamicdialog';
 import { DeferModule } from 'primeng/defer';
@@ -135,6 +136,7 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
     Select,
     DynamicDialog,
     DeferModule,
+    DropdownModule,
     EditorModule,
     FieldsetModule,
     FileUpload,
@@ -234,6 +236,7 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
     Dialog,
     DividerModule,
     DrawerModule,
+    DropdownModule,
     DeferModule,
     DockModule,
     DragDropModule,
